@@ -16,6 +16,7 @@ if __name__ == '__main__':
   games = json.load(open(DATAFILE))
   c = chessboard.Chessboard()
   print(c)
+  print()
   for move in games[1]["moves"]:
     c.move(move)
     print(c)

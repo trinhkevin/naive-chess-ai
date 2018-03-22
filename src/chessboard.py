@@ -9,6 +9,11 @@
 
 import chess
 
+'''
+will use this later for visual representation of board
+import chess.pgn
+'''
+
 class Chessboard(object):
   def __init__(self):
     self.board = chess.Board()
@@ -33,3 +38,4 @@ class Chessboard(object):
 
 if __name__ == '__main__':
   c = Chessboard()
+  print(c)
