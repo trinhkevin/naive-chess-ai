@@ -87,9 +87,9 @@ class Chessboard(object):
     index += 1
     self.netinputs[index] = self.board.has_queenside_castling_rights(chess.WHITE)
     index += 1
-    self.netinputs[index] = self.board.has_kingside_castling_rights(chess.WHITE)
+    self.netinputs[index] = self.board.has_kingside_castling_rights(chess.BLACK)
     index += 1
-    self.netinputs[index] = self.board.has_queenside_castling_rights(chess.WHITE)
+    self.netinputs[index] = self.board.has_queenside_castling_rights(chess.BLACK)
     index += 1
     # check this
     self.netinputs[index] = self.board.can_claim_fifty_moves()
