@@ -74,22 +74,25 @@ class Chessboard(object):
           self.netinputs[index] = True
         else:
           self.netinputs[index] = False
-          index += 1
+        index += 1
    
     for i in range(128):
       self.netinputs[index + i] = False
-      
+
     index += 128 # skipping repetitions for now
     
     self.netinputs[index] = self.board.turn
     index += 1
-    self.netinputs[index] = self.board.has_kingside_castling_rights(True)
+    self.netinputs[index] = self.board.has_kingside_castling_rights(chess.WHITE)
     index += 1
-    self.netinputs[index] = self.board.has_queenside_castling_rights(True)
+    self.netinputs[index] = self.board.has_queenside_castling_rights(chess.WHITE)
     index += 1
-    self.netinputs[index] = self.board.has_kingside_castling_rights(True)
+    self.netinputs[index] = self.board.has_kingside_castling_rights(chess.WHITE)
     index += 1
-    self.netinputs[index] = self.board.has_queenside_castling_rights(True)
+    self.netinputs[index] = self.board.has_queenside_castling_rights(chess.WHITE)
+    index += 1
+    # check this
+    self.netinputs[index] = self.board.can_claim_fifty_moves()
     index += 1
     
     for i in range(50):
