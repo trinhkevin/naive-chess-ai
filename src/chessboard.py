@@ -25,13 +25,10 @@ import chess.pgn
 
 #951 total bits (neurons)
 
-
 class Chessboard(object):
   def __init__(self):
     self.board = chess.Board()
     self.netinputs = bitarray(951)
-
-  
     
   def __str__(self):
     return str(self.board)
@@ -50,45 +47,69 @@ class Chessboard(object):
 
   def check(self):
     return self.board.is_check()
-  def getinputbits(self):
+
+  def getNetInputs(self):
     return self.netinputs
-  def geninputbits(self):
+
+  def turns(self):
+    s = []
+    while True:
+      try:
+        move = self.board.pop()
+      except IndexError:
+        break
+      s.append(move)
+    t = []
+    while len(s) > 0:
+      t.append(self.board.copy())
+      move = s.pop()
+      self.board.push(move)
+    return t
+
+  def genInputBits(self):
     index = 0
-    #putting piece locations in
     for p in ['P', 'R' , 'N' ,'B', 'Q' ,'K', 'p' , 'r' , 'n' , 'b' , 'q' ,'k']:
-        for i in range(0,64):
-            if(self.board.piece_at(i) and self.board.piece_at(i).symbol() == p):
-                self.netinputs[index] = True
-            else:
-                self.netinputs[index] = False
-            index = index + 1
-            
-    for i in range(0,128):
-        self.netinputs[index + i] = False
-    index = index + 128 # skipping repetitions for now
-    # ------------------------------------------------------
+      for i in range(64):
+        if(self.board.piece_at(i) and self.board.piece_at(i).symbol() == p):
+          self.netinputs[index] = True
+        else:
+          self.netinputs[index] = False
+          index += 1
+   
+    for i in range(128):
+      self.netinputs[index + i] = False
+      
+    index += 128 # skipping repetitions for now
     
     self.netinputs[index] = self.board.turn
-    index = index + 1
-    
-    
+    index += 1
     self.netinputs[index] = self.board.has_kingside_castling_rights(True)
-    index = index + 1
+    index += 1
     self.netinputs[index] = self.board.has_queenside_castling_rights(True)
-    index = index + 1
+    index += 1
     self.netinputs[index] = self.board.has_kingside_castling_rights(True)
-    index = index + 1
+    index += 1
     self.netinputs[index] = self.board.has_queenside_castling_rights(True)
-    index = index + 1
+    index += 1
     
-    for i in range(0,50):
-        self.netinputs[index + i] = 0
-        #somehow figure this out?
+    for i in range(50):
+      self.netinputs[index + i] = 0
+      #somehow figure this out?
     
-    
-
 if __name__ == '__main__':
   c = Chessboard()
+  c.move("e4")
+  c.move("e5")
+  c.move("Qh5")
+  c.move("Nc6")
+  c.move("Bc4")
+  c.move("Nf6")
+  c.move("Qxf7")
+  for i in c.turns():
+    print(i)
+
+  '''
   c.geninputbits()
   print(c)
   print(c.getinputbits())
+  '''

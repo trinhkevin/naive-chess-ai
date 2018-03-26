@@ -8,19 +8,21 @@
 '''
 
 import json
+import chessboard
 
 INFILE = '../data/games.csv'
 OUTFILE = '../data/games.json'
 
 # Creates games object containing all the games
 def create_data():
-	games = []
-	with open(INFILE) as file:
-		next(file)
-		for line in file:
-			line = line.strip().split(',')
-			game = {}
-			game["turns"] = line[4]
+  games = []
+  with open(INFILE) as file:
+    next(file)
+    for line in file:
+      c = chessboard.Chessboard()
+      for move in line[12].split(" "):
+        c.move(move)
+      '''
 			game["victory_status"] = line[5]
 			# 0 = white, 1 = black, 2 = draw
 			if line[6] == "white":
@@ -35,7 +37,9 @@ def create_data():
 			game["moves"] = moves
 			game["opening_eco"] = line[13]
 			games.append(game)
-	return games
+      '''
+      games.append(c)
+  return games
 
 # Writes game object (in json) to file
 def write_data(data):
