@@ -113,8 +113,8 @@ class Chessboard(object):
     for i in range(0, 50):
       if i == self.board.halfmove_clock:
         inputs[index] = 1;
-        continue;
-      inputs[index] = 0;
+      else:
+        inputs[index] = 0;
 
 if __name__ == '__main__':
   c = Chessboard()
