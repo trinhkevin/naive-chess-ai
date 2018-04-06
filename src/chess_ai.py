@@ -14,6 +14,7 @@ import json
 import chessboard
 import math
 import random
+import copy 
 
 class StateNode:
   def __init__(self, board, move=None):
@@ -28,7 +29,7 @@ class StateNode:
 
   def createChildren(self):
     for move in self.board.getLegalMoves():
-      board = self.board.copy()
+      board = copy.deepcopy(self.board)
       board.move_uci(move)
       child = StateNode(board, move)
       self.children.add(child)
