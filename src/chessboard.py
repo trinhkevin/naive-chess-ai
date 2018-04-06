@@ -66,7 +66,7 @@ class Chessboard(object):
       self.board.push(move)
     return t
 
-  def getNetworkInput(self):
+  def networkInput(self):
     index = 0
 
     # White pieces
