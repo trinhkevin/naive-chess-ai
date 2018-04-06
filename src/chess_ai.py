@@ -12,6 +12,55 @@ DATAFILE = '../data/games.json'
 import json
 import chessboard
 
+
+class stateNode:
+  def __init__(self, board):
+    self.visits = 0
+    self.value = 0
+    self.board = board
+    self.children = set()
+    self.terminalValue = 0
+    self.terminal = False
+    self.turn = 0
+  def createChildren(self):
+    ###
+  def bestChild(self):
+    ###
+  def UCB_sample(self):
+    ###
+  def playout(self):
+
+
+
+
+def monte_carlo(board):
+  #select
+
+  #expand
+
+  #simulate
+
+  #backup
+
+def MCTS(state):
+  state.visits = state.visits + 1
+  if (state.terminal):
+    return
+  if (len(state.children) == 0):
+    state.createChildren()
+  for child in state.children:
+    if(child.visits == 0):
+      child.visits = 1
+      child.value = 0
+      child.playout()
+      return
+  
+      #expand 
+      #break
+  
+
+
+
 if __name__ == '__main__':
   games = json.load(open(DATAFILE))
   c = chessboard.Chessboard()
@@ -21,4 +70,3 @@ if __name__ == '__main__':
     c.move(move)
     print(c)
     print()
-
