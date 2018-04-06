@@ -17,6 +17,11 @@ We are using unsupervised learning to allow Chess-AI to continually update the p
 ## Python Libraries Used ##
 * python-chess
 * bitarray
-
 * [python-chess](https://pypi.python.org/pypi/python-chess) `pip3 install python-chess`
 * [scikit-learn](http://scikit-learn.org/stable/install.html)
+
+## Sources ##
+* [IBM Deep Blue](http://www.nydailynews.com/news/world/kasparov-deep-blues-losingchess-champ-rooke-article-1.762264)
+* ["Mastering Chess" Paper](https://arxiv.org/abs/1712.01815v1)
+* [Chess Data](https://www.kaggle.com/datasnaek/chess)
+* [MCTS Citation](https://www.cs.swarthmore.edu/~bryce/cs63/s16/slides/2-15_MCTS.pdf)
