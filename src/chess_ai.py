@@ -29,11 +29,23 @@ class StateNode:
     self.move = move
 
   def createChildren(self):
+    childCreated = False
     for move in self.board.getLegalMoves():
+      childCreated = True
       board = copy.deepcopy(self.board)
       board.move_uci(move)
       child = StateNode(board, move)
       self.children.add(child)
+    if not childCreated:
+      if self.board.is_stalemate():
+        self.terminalValue = 0
+      else:
+        # White's turn, so white lost
+        if self.board.getTurn():
+          self.terminalValue = -1
+        # Black's turn, so black lost
+        else:
+          self.terminalValue = 1
 
   def getBestChild(self):
     # If there are no possible children,
@@ -107,7 +119,7 @@ def UCB(v, N, n_i):
 
 def monteCarlo(chessboard):
   root = StateNode(chessboard)
-  for i in range(ITERATIONS)
+  for i in range(ITERATIONS):
     MCTS(root)
   return root.getBestChild()
 
@@ -115,10 +127,10 @@ def MCTS(state):
   state.visits = state.visits + 1
   if state.terminal:
     return
-  if !len(state.children):
+  if len(state.children) == 0:
     state.createChildren()
   for child in state.children:
-    if !child.visits:
+    if child.visits == 0:
       child.visits = 1
       child.value = 0
       winner = child.playout()
