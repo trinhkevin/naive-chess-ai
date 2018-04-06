@@ -16,7 +16,7 @@ import math
 import random
 
 class StateNode:
-  def __init__(self, board):
+  def __init__(self, board, move=None):
     self.visits = 0
     self.value = 0
     self.board = board
@@ -24,12 +24,13 @@ class StateNode:
     self.terminalValue = 0
     self.terminal = False
     self.turn = self.board.getTurn()
+    self.move = move
 
   def createChildren(self):
     for move in self.board.getLegalMoves():
       board = self.board.copy()
       board.move_uci(move)
-      child = StateNode(board)
+      child = StateNode(board, move)
       self.children.add(child)
 
   def getBestChild(self):
@@ -85,7 +86,7 @@ class StateNode:
     elif testBoard.checkmate():
       return -1 if testBoard.getTurn() else 1
 
-  def update_value(self, winner):
+  def updateValue(self, winner):
     if winner == self.turn:
       self.value = self.value + 1
     else:
@@ -115,7 +116,7 @@ def MCTS(state):
       child.visits = 1
       child.value = 0
       winner = child.playout()
-      state.update_value(winner)
+      state.updateValue(winner)
       return winner
   next_state = state.UCB_sample()
   winner = MCTS(next_state)
