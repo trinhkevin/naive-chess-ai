@@ -86,7 +86,7 @@ class StateNode:
       return -1 if testBoard.getTurn() else 1
 
   def update_value(self, winner):
-    if (winner == self.turn):
+    if winner == self.turn:
       self.value = self.value + 1
     else:
       self.value = self.value - 1
@@ -106,12 +106,12 @@ def monte_carlo(board):
 
 def MCTS(state):
   state.visits = state.visits + 1
-  if (state.terminal):
+  if state.terminal:
     return
-  if (len(state.children) == 0):
+  if len(state.children) == 0:
     state.createChildren()
   for child in state.children:
-    if(child.visits == 0):
+    if child.visits == 0:
       child.visits = 1
       child.value = 0
       winner = child.playout()
