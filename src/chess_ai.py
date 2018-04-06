@@ -10,13 +10,10 @@
 DATAFILE = '../data/games.json'
 C = 1.41
 
-
 import json
 import chessboard
 import math
-
-
-
+import random
 
 class StateNode:
   def __init__(self, board):
@@ -26,10 +23,10 @@ class StateNode:
     self.children = set()
     self.terminalValue = 0
     self.terminal = False
-    self.turn = 0
+    self.turn = self.board.getTurn()
 
   def createChildren(self):
-    for move in self.board.legal_moves:
+    for move in self.board.getLegalMoves():
       board = self.board.copy()
       board.move_uci(move)
       child = StateNode(board)
@@ -69,7 +66,24 @@ class StateNode:
     return result
 
   def playout(self):
-    pass
+    testBoard = self.board.copy()
+    terminal = False
+    while not terminal:
+      moveIndex = random.randint(0, len(self.children))
+      index = 0
+      move = None
+      for legalMove in self.board.getLegalMoves():
+        if index == moveIndex:
+          move = legalMove
+          break
+        index += 1
+      testBoard.move_uci(move)
+      if testBoard.checkmate() or testBoard.stalemate():
+        terminal = True
+    if testBoard.stalemate():
+      return 0
+    elif testBoard.checkmate():
+      return -1 if testBoard.getTurn() else 1
 
   def update_value(self, winner):
     if (winner == self.turn):

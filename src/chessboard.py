@@ -31,7 +31,7 @@ no_progress : 100 (half moves)
 
 class Chessboard(object):
   def __init__(self):
-    self.board = chess.Board()
+    self.board  = chess.Board()
     self.inputs = bitarray(951)
     
   def __str__(self):
@@ -46,7 +46,7 @@ class Chessboard(object):
   def checkmate(self):
     return self.board.is_game_over()
 
-  def is_stalemate(self):
+  def stalemate(self):
     return self.board.is_stalemate()
 
   def draw(self):
@@ -57,6 +57,9 @@ class Chessboard(object):
 
   def getTurn(self):
     return self.board.turn
+
+  def getLegalMoves(self):
+    return self.board.legal_moves
 
   def turns(self):
     s = []
