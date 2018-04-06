@@ -57,6 +57,8 @@ class StateNode:
 
   def playout(self):
     pass
+  def update_value(self, winner):
+    pass
 
 
 def monte_carlo(board):
@@ -78,12 +80,13 @@ def MCTS(state):
     if(child.visits == 0):
       child.visits = 1
       child.value = 0
-      child.playout()
-      return
-  
-      #expand 
-      #break
-  
+      winner = child.playout()
+      state.update_value(winner)
+      return winner
+  next_state = state.UCB_sample()
+  winner = MCTS(next_state)
+  state.update_value(winner)
+  return winner
 
 
 
