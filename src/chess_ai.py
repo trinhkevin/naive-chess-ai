@@ -32,7 +32,7 @@ class StateNode:
   def getBestChild(self):
     # If there are no possible children,
     # set the node terminal and give it a value
-    if len(children) == 0:
+    if len(self.children) == 0:
       self.terminal = True
       if self.board.is_stalemate():
         self.terminalValue = 0
