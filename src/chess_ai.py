@@ -24,7 +24,7 @@ class StateNode:
 
   def createChildren(self):
     for move in self.board.legal_moves:
-      board = chessboard.Board()
+      board = self.board.copy()
       board.move_uci(move)
       child = StateNode(board)
       self.children.add(child)
@@ -87,8 +87,6 @@ def MCTS(state):
   winner = MCTS(next_state)
   state.update_value(winner)
   return winner
-
-
 
 if __name__ == '__main__':
   games = json.load(open(DATAFILE))

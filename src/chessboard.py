@@ -73,6 +73,9 @@ class Chessboard(object):
       self.board.push(move)
     return t
 
+  def copy(self):
+    return self.board.copy()
+
   def networkInput(self):
     index = 0
 
