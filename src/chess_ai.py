@@ -29,7 +29,9 @@ class stateNode:
   def UCB_sample(self):
     ###
   def playout(self):
-
+    ###
+  def update_value(self, winner):
+    ###
 
 
 
@@ -52,9 +54,9 @@ def MCTS(state):
     if(child.visits == 0):
       child.visits = 1
       child.value = 0
-      child.playout()
-      return
-  
+      winner = child.playout()
+  next_state = state.UCB_sample()
+  winner = MCTS(next_state)
       #expand 
       #break
   
