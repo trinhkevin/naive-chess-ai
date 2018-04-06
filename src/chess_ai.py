@@ -4,17 +4,18 @@
 	Chess AI utilizing a neural network
 	Andrew Callahan, Anthony Luc, Kevin Trinh
 	Machine Learning
-	03/20/2018
+	04/05/2018
 '''
 
 DATAFILE = '../data/games.json'
 C = 1.41
-ITERATIONS = 1000
+ITERATIONS = 5000
 
 import json
 import chessboard
 import math
 import random
+import copy
 
 class StateNode:
   def __init__(self, board, move=None):
@@ -52,8 +53,8 @@ class StateNode:
 
     # Else, find the best child
     bestChild = None
-    for child in children:
-      if bestChild is None or child > bestChild:
+    for child in self.children:
+      if bestChild is None or child.value > bestChild.value:
         bestChild = child;
     return bestChild
 
@@ -68,6 +69,8 @@ class StateNode:
     return result
 
   def playout(self):
+    if self.terminal:
+      return self.terminalValue
     testBoard = self.board.copy()
     terminal = False
     while not terminal:
@@ -79,40 +82,43 @@ class StateNode:
           move = legalMove
           break
         index += 1
-      testBoard.move_uci(move)
-      if testBoard.checkmate() or testBoard.stalemate():
+      testBoard.push(move)
+      if testBoard.is_game_over() or testBoard.is_stalemate():
         terminal = True
-    if testBoard.stalemate():
+    if testBoard.is_stalemate():
       return 0
-    elif testBoard.checkmate():
-      return -1 if testBoard.getTurn() else 1
+    elif testBoard.is_game_over():
+      return -1 if testBoard.turn else 1
 
   def updateValue(self, winner):
-    if winner == self.turn:
-      self.value = self.value + 1
+    if self.turn:
+      if winner == 1:
+        self.value += 1
+      elif winner == -1:
+        self.value -=1
     else:
-      self.value = self.value - 1
+      if winner == 1:
+        self.value -= 1
+      elif winner == -1:
+        self.value +=1
 
+def UCB(v, N, n_i):
+  return v + C * math.sqrt(math.log(N)/n_i)
 
-def UCB(v, N, ni):
-  return v + C * math.sqrt(math.log(N)/ni)
-
-def monte_carlo(board):
-  root = StateNode(board)
-  i = 0
-  while i < ITERATIONS:
+def monteCarlo(chessboard):
+  root = StateNode(chessboard)
+  for i in range(ITERATIONS)
     MCTS(root)
-    i = i + 1
-  return root.bestChild()
+  return root.getBestChild()
 
 def MCTS(state):
   state.visits = state.visits + 1
   if state.terminal:
     return
-  if len(state.children) == 0:
+  if !len(state.children):
     state.createChildren()
   for child in state.children:
-    if child.visits == 0:
+    if !child.visits:
       child.visits = 1
       child.value = 0
       winner = child.playout()
@@ -120,10 +126,13 @@ def MCTS(state):
       return winner
   next_state = state.UCB_sample()
   winner = MCTS(next_state)
-  state.update_value(winner)
+  state.updateValue(winner)
   return winner
 
 if __name__ == '__main__':
-  #games = json.load(open(DATAFILE))
   c = chessboard.Chessboard()
-  print(c.monte_carlo())
+  for i in range(0, 10):
+    print(c)
+    print()
+    move = monteCarlo(c).move
+    c.move_uci(move)
