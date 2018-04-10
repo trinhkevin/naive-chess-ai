@@ -9,6 +9,7 @@
 
 import json
 import chessboard
+import pickle
 
 INFILE = '../data/games.csv'
 OUTFILE = '../data/games.json'
@@ -20,17 +21,24 @@ def create_data():
     next(file)
     for line in file:
       c = chessboard.Chessboard()
-      for move in line[12].split(" "):
+      for move in line.split(",")[12].split(" "):
         c.move(move)
       games.append(c)
   return games
 
 # Writes game object (in json) to file
 def write_data(data):
-	with open(OUTFILE, 'w') as file:
-		json.dump(data, file)
+	with open(OUTFILE, 'wb') as file:
+		pickle.dump(data, file)
+
+def load_data():
+  with open(OUTFILE, 'rb') as file:
+    return pickle.load(file)
 
 # Main Execution
 if __name__ == '__main__':
-	games = create_data()
-	write_data(games)
+  
+  games = create_data()
+  write_data(games)
+
+  print(load_data())
