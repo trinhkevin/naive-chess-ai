@@ -69,7 +69,7 @@ class StateNode:
     # Else, find the best child
     bestChild = None
     for child in self.children:
-      if bestChild is None or child.value > bestChild.value:
+      if bestChild is None or child.value / child.visits > bestChild.value / bestChild.visits:
         bestChild = child;
     return bestChild
 
@@ -89,27 +89,18 @@ class StateNode:
     testBoard = self.board.copy()
     terminal = False
     while not terminal:
-      
-      legalMoves = [x for x in testBoard.legal_moves]
-      move = legalMoves[random.randint(0, len(legalMoves) - 1)]
-
-      '''   
-      moveIndex = random.randint(0, - 1)
-      index = 0
-      move = None
-      for legalMove in testBoard.legal_moves:
-        if index == moveIndex:
-          move = legalMove
-          break
-        index += 1
-      '''
-      testBoard.push(move)
       if testBoard.is_game_over() or testBoard.is_stalemate():
         terminal = True
+      legalMoves = [x for x in testBoard.legal_moves]
+      if not len(legalMoves):
+        break
+      move = legalMoves[random.randint(0, len(legalMoves) - 1)]
+      testBoard.push(move)
     if testBoard.is_stalemate():
       return 0
     elif testBoard.is_game_over():
       return -1 if testBoard.turn else 1
+    return 0
 
   def updateValue(self, winner):
     if self.turn:
@@ -130,13 +121,7 @@ def monteCarlo(chessboard):
   root = StateNode(chessboard)
   for i in range(ITERATIONS):
     MCTS(root)
-  '''
-  curr = root
-  while len(curr.children):
-    print(curr.getBestChild().move)
-    curr = curr.getBestChild()
   return root.getBestChild()
-  '''
 
 def MCTS(state):
   if state.terminal:
@@ -158,9 +143,14 @@ def MCTS(state):
 
 if __name__ == '__main__':
   c = chessboard.Chessboard()
-  print(type(c.board.legal_moves))
-  for i in range(0, 10):
+  moves = 0
+  print(c)
+  print()
+  move = monteCarlo(c).move
+  while move is not None:
+    c.move_uci(move)
+    moves += 1
     print(c)
     print()
     move = monteCarlo(c).move
-    c.move_uci(move)
+  print(moves)
