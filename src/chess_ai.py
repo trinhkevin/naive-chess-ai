@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
+
+
+
 '''
 	Chess AI utilizing a neural network
 	Andrew Callahan, Anthony Luc, Kevin Trinh
 	Machine Learning
 	04/05/2018
 '''
+
+# https://python-chess.readthedocs.io/en/v0.23.0/core.html
+
 
 DATAFILE = '../data/games.json'
 C = 1.41
@@ -17,30 +23,47 @@ import math
 import random
 import copy
 
+
+class AI:
+  def __init__(self, board):
+    self.tree =StateNode(board)
+
+  def monteCarlo(self):
+    for i in range(ITERATIONS):
+      MCTS(self.tree)
+    '''
+    curr = root
+    while len(curr.children):
+      print(curr.getBestChild().move)
+      curr = curr.getBestChild()
+    '''
+    result = self.tree.getBestChild()
+    self.tree = result
+    return self.tree
 class StateNode:
   def __init__(self, board, move=None):
     self.visits = 0
     self.value = 0
     self.board = board
     self.children = set()
-    self.terminalValue = 0
-    self.terminal = False
     self.turn = self.board.getTurn()
     self.move = move
 
+  def isTerminal(self):
+    return self.board.board.is_game_over()
+
+  def terminalValue(self):
+    if self.board.board.result() == '1/2-1/2':
+      return 0
+    elif self.board.board.result() == '1-0':
+      return 1
+    elif self.board.board.result() == '0-1':
+      return -1
+    else:
+      print('Error: invalid terminal')
+      exit(1)
+
   def createChildren(self):
-    if not self.board.getLegalMoves().count():
-      self.terminal = True
-      if self.board.stalemate():
-        self.terminalValue = 0
-      else:
-        # White's turn, so white lost
-        if self.board.getTurn():
-          self.terminalValue = -1
-        # Black's turn, so black lost
-        else:
-          self.terminalValue = 1
-      return
 
     for move in self.board.getLegalMoves():
       board = copy.deepcopy(self.board)
@@ -77,20 +100,15 @@ class StateNode:
     result = None
     resultUCB = None
     for child in self.children:
-      candidateUCB = UCB(child.value, self.visits, child.visits)
+      candidateUCB = UCB(child.value/child.visits, self.visits, child.visits)
       if result is None or candidateUCB > resultUCB:
         result = child
         resultUCB = candidateUCB
     return result
 
   def playout(self):
-    if self.terminal:
-      return self.terminalValue
     testBoard = self.board.copy()
-    terminal = False
-    while not terminal:
-      if testBoard.is_game_over() or testBoard.is_stalemate():
-        terminal = True
+    while testBoard.result() == '*':
       legalMoves = [x for x in testBoard.legal_moves]
       if not len(legalMoves):
         break
@@ -101,17 +119,19 @@ class StateNode:
     elif testBoard.is_game_over():
       return -1 if testBoard.turn else 1
     return 0
+    if testBoard.result() == '1/2-1/2':
+      return 0
+    else:
+      return -1 if testBoard.result() == '0-1' else 1
 
   def updateValue(self, winner):
+    if winner == 0:
+      self.value += 0.5
     if self.turn:
       if winner == 1:
         self.value += 1
-      elif winner == -1:
-        self.value -=1
     else:
-      if winner == 1:
-        self.value -= 1
-      elif winner == -1:
+      if winner == -1:
         self.value +=1
 
 def UCB(v, N, n_i):
@@ -124,8 +144,8 @@ def monteCarlo(chessboard):
   return root.getBestChild()
 
 def MCTS(state):
-  if state.terminal:
-    return state.terminalValue
+  if state.isTerminal():
+    return state.terminalValue()
   state.visits += 1
   if len(state.children) == 0:
     state.createChildren()
@@ -134,6 +154,7 @@ def MCTS(state):
       child.visits = 1
       child.value = 0
       winner = child.playout()
+      child.updateValue(winner)
       state.updateValue(winner)
       return winner
   next_state = state.UCB_sample()
@@ -143,14 +164,11 @@ def MCTS(state):
 
 if __name__ == '__main__':
   c = chessboard.Chessboard()
-  moves = 0
-  print(c)
-  print()
-  move = monteCarlo(c).move
-  while move is not None:
-    c.move_uci(move)
-    moves += 1
-    print(c)
-    print()
-    move = monteCarlo(c).move
-  print(moves)
+  c.move('g2g4')
+  c.move('a7a6')
+  c.move('c2c4')
+  c.move('e7e6')
+  c.move('f2f4')
+  ai = AI(c)
+  for i in range(0, 100):
+    print(ai.monteCarlo().move)
