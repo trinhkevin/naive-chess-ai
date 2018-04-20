@@ -174,3 +174,4 @@ def formatData():
 
 	
 
+train()
